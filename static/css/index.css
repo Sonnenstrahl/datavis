@@ -1,0 +1,35 @@
+/*
+    @Author: David Haas
+    Custom Css
+*/
+#occupation-piechart svg {width: 750px;}
+.pie-label-group {
+    visibility: hidden;
+    pointer-events: none;
+}
+.dc-chart .selected path {
+    stroke: none;
+}
+
+.navbar-nav.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+}
+#select-bad-case, #select-computer, #select-retired, #select-sex, #select-student, #select-vehicle, #select-hhldsize, #select-sector {
+    padding:2px;
+}
+.select-title {
+    color: #666;
+    font-size: 14px;
+    font-weight: 200;
+    padding: 5px 4px;
+}
+#total-records{
+    pointer-events: none;
+}
+.number-display{
+    font-size:20px;
+    color: white;
+
+}

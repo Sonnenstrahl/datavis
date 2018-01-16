@@ -1,0 +1,6 @@
+# General
+.DS_Store
+# MTUS data
+/MTUS
+# pycharm
+.idea/
