@@ -53,7 +53,7 @@
 
 .keen-dashboard .chart-wrapper .chart-stage {
   overflow: hidden;
-  padding: 5px 10px;
+  padding-top: 10px;
   position: relative;
 }
 

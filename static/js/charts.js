@@ -107,6 +107,15 @@ var sector = {
     1: 'Public Sector',
     2: 'Private Sector'
 };
+var famstat = {
+    0: 'Adult aged 18 to 39 with no co-resident children <18',
+    1: 'Adult 18+ living with 1+ co-resident children aged <5',
+    2: 'Adult 18+ living with 1+ co-resident children 5-17, none <5',
+    3: 'Adult aged 40+ with no co-resident children <18',
+    4: 'Respondent aged <18 and living with parent(s)/guardian(s)',
+    5: 'Respondent aged <18, living arrangement other or unknown',
+    6: 'undefined'
+};
 
 function buildVisualisation(error, json, geoJson) {
     console.log(error);
@@ -124,11 +133,16 @@ function buildVisualisation(error, json, geoJson) {
             d['main40'], d['main41'], d['main42'], d['main43'], d['main44'], d['main45'], d['main46'], d['main47'], d['main48'], d['main49'], d['main50'], d['main51'], d['main52'],
             d['main53'], d['main54'], d['main55'], d['main56'], d['main57'], d['main58'], d['main59'], d['main60'], d['main61'], d['main62'], d['main63'], d['main64'], d['main65'],
             d['main66'], d['main67'], d['main68'], d['main69']];
-        //Convert Occupation into Text
+        //Convert occupation into Text
         if (d['occup'] in occup) {
             d['occupFix'] = occup[d['occup']];
         }
         else d['occupFix'] = occup[15];
+        //Convert famstat into Text
+        if (d['famstat'] in famstat) {
+            d['famstatFix'] = famstat[d['famstat']]
+        }
+        else d['famstatFix'] = famstat[6];
         //Combine Ages into Bins, CF bins work but do not filter correctly.
         if (d['age']) {
             if (d['age'] < 20) {
@@ -160,12 +174,12 @@ function buildVisualisation(error, json, geoJson) {
 
     /*
         Custom reduce functions, to work with arrays, activities are converted into the following:
-        [day,activity]: value
-        for example: ['Monday','main1']: 10
+        'day,activity': value
+        for example: 'Monday,main1': 10
      */
     function reduceAdd(p, v) {
         v['main'].forEach(function (val, index) {
-            if (val > 0) {
+            if (val >= 0) {
                 //+1 since Activity 0 is not a thing, but the first index of the array is 0
                 var temp_array = [v['day'], index + 1];
                 p[temp_array].push(val);
@@ -176,7 +190,7 @@ function buildVisualisation(error, json, geoJson) {
 
     function reduceRemove(p, v) {
         v['main'].forEach(function (val, index) {
-            if (val > 0) {
+            if (val >= 0) {
                 var temp_array = [v['day'], index + 1];
                 var indx = p[temp_array].indexOf(val);
                 p[temp_array] = p[temp_array].splice(indx,1);
@@ -669,7 +683,7 @@ function buildVisualisation(error, json, geoJson) {
             'Sunday,66':[],
             'Sunday,67':[],
             'Sunday,68':[],
-            'Sunday,69':[]
+            'Sunday,69':[],
         };
     }
 
@@ -687,6 +701,8 @@ function buildVisualisation(error, json, geoJson) {
                 var avg = Math.round(sum/this[temp_array].length);
                 newObject.push({
                     key: temp_array,
+                    day: temp_array[0],
+                    activity: temp_array[1],
                     max: max,
                     avg: avg,
                     sum: sum
@@ -695,7 +711,6 @@ function buildVisualisation(error, json, geoJson) {
             }
         return newObject;
     };
-
     //TimeChart
     var years = ndx.dimension(function (d) {
         return d['year'];
@@ -736,6 +751,11 @@ function buildVisualisation(error, json, geoJson) {
     });
     var workHrsGrouped = workHrs.group();
 
+    //Famstat Distribution
+    var famstatDim = ndx.dimension(function(d){
+        return d['famstatFix'];
+    });
+    var famstatGrouped = famstatDim.group();
     //DataTable
 /*
     var tableDim = ndx.dimension(function (d) {
@@ -786,6 +806,7 @@ function buildVisualisation(error, json, geoJson) {
     var ageChart = dc.rowChart('#ageChart');
     var weekDay = dc.rowChart('#weekDay');
     var workHrsChart = dc.rowChart('#workhrs');
+    var famstatChart = dc.rowChart('#famstat');
     var chloropleth = dc.geoChoroplethChart('#chloropleth');
     var occupationPie = dc.pieChart('#occupation-piechart');
     var heatMap = dc.heatMap('#heatmap');
@@ -800,15 +821,15 @@ function buildVisualisation(error, json, geoJson) {
    // var dataTable = dc.dataTable('#dataTable');
 
     heatMap
-        .width(1500)
-        .height(150)
+        .width(1700)
+        .height(200)
         .dimension(heatDim)
         .group(heatGroup)
         .valueAccessor(function (d) {
-            return d.key[0];
+            return d.day;
         })
         .keyAccessor(function (d) {
-            return d.key[1];
+            return d.activity;
         })
         .colorAccessor(function (d) {
             return d.avg;
@@ -838,13 +859,13 @@ function buildVisualisation(error, json, geoJson) {
         .group(all);
 
     timeChart
-        .width(500)
+        .width(700)
         .height(180)
         .margins({top: 10, right: 50, left: 80, bottom: 50})
         .dimension(years)
         .group(recordsByYear)
         .transitionDuration(200)
-        .x(d3.scale.linear().domain([firstYear, lastYear + 1]))
+        .x(d3.scale.ordinal().domain([firstYear-1, lastYear + 1]))
         .elasticY(true)
         .centerBar(true)
         .xAxisLabel('Year')
@@ -852,24 +873,32 @@ function buildVisualisation(error, json, geoJson) {
         .yAxis().ticks(5);
 
     ageChart
-        .width(300)
-        .height(250)
+        .width(320)
+        .height(200)
         .dimension(age)
         .elasticX(true)
         .group(ageGrouped)
         .xAxis().ticks(4);
 
+    famstatChart
+        .width(320)
+        .height(200)
+        .dimension(famstatDim)
+        .elasticX(true)
+        .group(famstatGrouped)
+        .xAxis().ticks(2);
+
     workHrsChart
-        .width(300)
-        .height(250)
+        .width(320)
+        .height(200)
         .dimension(workHrs)
         .elasticX(true)
         .group(workHrsGrouped)
-        .xAxis().ticks(4);
+        .xAxis().ticks(2);
 
     weekDay
-        .width(300)
-        .height(250)
+        .width(320)
+        .height(200)
         .dimension(days)
         .group(recordsByDay)
         .gap(1)
