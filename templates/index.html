@@ -37,7 +37,7 @@
                   <li><a id="total-records"></a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a><button class="btn btn-sm" id="download"><span class="fa fa-download fa-lg"></span></button></a></li>
+                <li><a><button class="btn btn-sm" id="download">Download CSV<span class="fa fa-download fa-lg"></span></button></a></li>
             </ul>
         </div>
     </div>
@@ -70,13 +70,13 @@
         <div class="col-sm-12">
             <div class="chart-wrapper">
                 <div class="chart-title">
-                    Cell Title
+                    Heatmap
                 </div>
                 <div class="chart-stage">
                     <div id="heatmap"></div>
                 </div>
                 <div class="chart-notes">
-                    Notes about this chart
+                    Hover over an Activity to see the Average Minutes spent on this activity
                 </div>
             </div>
         </div>
@@ -119,6 +119,12 @@
                 <div class="chart-stage">
                     <div id="ageChart"></div>
                 </div>
+                <div class="chart-title">
+                    Work Hours
+                </div>
+                <div class="chart-stage">
+                    <div id="workhrs"></div>
+                </div>
             </div>
         </div>
 
@@ -136,6 +142,18 @@
             </div>
         </div>
     </div>
+{#    <div class="row">
+        <div class="col-sm-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">
+                    Data Table
+                </div>
+                <div class="chart-stage">
+                    <div id="dataTable"></div>
+                </div>
+            </div>
+        </div>
+    </div>#}
 </div>
 
 <div class="container-fluid">
