@@ -2,11 +2,15 @@
     @Author: David Haas
     Custom Css with some simple fixes
 */
-#occupation-piechart svg {width: 750px;}
-.pie-label-group {
+#occupation-piechart svg {
+    width: 750px;
+}
+
+#occupation-piechart .pie-label-group {
     visibility: hidden;
     pointer-events: none;
 }
+
 .dc-chart .selected path {
     stroke: none;
 }
@@ -16,20 +20,38 @@
     left: 50%;
     transform: translatex(-50%);
 }
+
 #select-bad-case, #select-computer, #select-retired, #select-sex, #select-student, #select-vehicle, #select-hhldsize, #select-sector {
-    padding:2px;
+    padding: 2px;
 }
+
 .select-title {
     color: #666;
     font-size: 14px;
     font-weight: 200;
     padding: 5px 4px;
 }
-#total-records{
+
+#total-records {
     pointer-events: none;
 }
-.number-display{
-    font-size:20px;
+
+.number-display {
+    font-size: 20px;
     color: white;
 
+}
+
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.keen-dashboard .chart-wrapper {
+    margin-bottom: 5px;
+}
+select[multiple], select[size] {
+    min-width:110px;
 }

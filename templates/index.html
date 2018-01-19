@@ -34,7 +34,7 @@
                 <li><a target="_blank" href="">Import Data</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-center">
-                  <li><a id="total-records"></a></li>
+                  <li><a id="total-records">#</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a><button class="btn btn-sm" id="download">Download CSV<span class="fa fa-download fa-lg"></span></button></a></li>
@@ -45,16 +45,26 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-9">
             <div class="chart-wrapper">
                 <div class="chart-title">
-                    Time spent on specific activity on specific day
+                    Time spent on a specific activity on a specific Day
                 </div>
                 <div class="chart-stage">
                     <div id="heatmap"></div>
                 </div>
                 <div class="chart-notes">
-                    Hover over an Activity to see the Average Minutes spent on this activity
+                    Hover over an activity to see the average minutes spent on this activity
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="chart-wrapper">
+                <div class="chart-title">
+                    Time spent on combined Activities
+                </div>
+                <div class="chart-stage">
+                    <div id="groupedActivities"></div>
                 </div>
             </div>
         </div>
@@ -71,7 +81,7 @@
                     </div>
                 </div>
                 <div class="chart-title">
-                    Records By year
+                    Records by Year
                 </div>
                 <div class="chart-stage">
                     <div id="timeChart"></div>
@@ -139,7 +149,10 @@
                     <div id="select-computer"></div>
                     <div id="select-vehicle"></div>
                     <div id="select-hhldsize"></div>
+                    <div id="select-singpar"></div>
                     <div id="select-sector"></div>
+                    <div id="select-empstat"></div>
+                    <div id="select-citizen"></div>
                 </div>
                 <div class="chart-notes">
                     Use Shift or CMD click to select multiple items in the same Filter
@@ -147,18 +160,6 @@
             </div>
         </div>
     </div>
-{#    <div class="row">
-        <div class="col-sm-12">
-            <div class="chart-wrapper">
-                <div class="chart-title">
-                    Data Table
-                </div>
-                <div class="chart-stage">
-                    <div id="dataTable"></div>
-                </div>
-            </div>
-        </div>
-    </div>#}
 </div>
 
 <div class="container-fluid">
