@@ -1,6 +1,8 @@
 
 # Timeuse Datavisualisation
 
+![](https://i.imgur.com/SUYZb5L.gif)
+
 This application visualizes the MTUS-adult-aggregate.csv file from [The Centre For Time Use Research](https://timeuse.org/)
 Skimming over their [Multinational Time Use Study Documentation](https://www.timeuse.org/sites/default/files/9727/mtus-user-guide-r9-february-2016.pdf) is recommended
 ### Requirements
