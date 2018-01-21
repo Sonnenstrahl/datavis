@@ -21,7 +21,7 @@
     transform: translatex(-50%);
 }
 
-#select-bad-case, #select-computer, #select-retired, #select-sex, #select-student, #select-vehicle, #select-hhldsize, #select-sector {
+.filters > div{
     padding: 2px;
 }
 

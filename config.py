@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # @Author: David Haas
-# Variables
+# CONST
 APP_HOST = 'localhost'
 APP_PORT = 8080
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 DB_NAME = 'timeuse'
-COLL_NAME = 'temp'
+DB_COLL = 'big'
+
 # Fields could be excluded here in the future if there is no reason to work with them
 FIELDS = {
     '_id': True,
@@ -34,6 +35,7 @@ FIELDS = {
     'income': True,
     'ownhome': True,
     'urban': True,
+    'cohab': True,
     'computer': True,
     'vehicle': True,
     'sex': True,
@@ -166,12 +168,6 @@ FIELDS = {
     'av39': True,
     'av40': True,
     'av41': True,
-    'av42': True,
-    'av43': True,
-    'av44': True,
-    'av45': True,
-    'av46': True,
-    'av47': True,
     'sppart': True,
     'ocombwt': True,
     'propwt': True,
@@ -289,4 +285,4 @@ countrya = {
     38: 'USA'
 }
 # Countries not included
-EXCLUDED = [2, 5, 7, 8, 15, 19, 23, 25, 28, 33, 38]
+EXCLUDED = [2, 5, 7, 8, 15, 19, 23, 25, 28, 33, 38, 35,11,4,9,10,16,37,34]

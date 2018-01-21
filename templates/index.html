@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>TimeUse Dashboard</title>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'/>
-
+    <link rel="shortcut icon" href="{{ url_for('static',filename='img/favicon.ico')}}"/>
     <!-- Stylesheets -->
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/lib/bootstrap.min.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/lib/keen-dashboards.css')}}" />
@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/index.css')}}" />
 
 </head>
-<body class="keen-dashboard" style="padding-top: 80px;">
+<body class="keen-dashboard" style="padding-top: 75px;">
 
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
@@ -25,13 +25,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="./">TimeUse Dashboard</a>
+            <a class="navbar-brand" href="{{ url_for('index') }}">TimeUse Dashboard</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-left">
                 <li><a target="_blank" href="https://www.timeuse.org/sites/default/files/9727/mtus-user-guide-r9-february-2016.pdf">MTUS User Guide</a></li>
                 <li><a target="_blank" href="https://github.com/Sonnenstrahl/datavis/blob/master/README.md">Documentation</a></li>
-                <li><a target="_blank" href="">Import Data</a></li>
+                <!---<li><a target="_blank" href="">Import Data</a></li>-->
             </ul>
             <ul class="nav navbar-nav navbar-center">
                   <li><a id="total-records">#</a></li>
@@ -48,7 +48,7 @@
         <div class="col-sm-9">
             <div class="chart-wrapper">
                 <div class="chart-title">
-                    Time spent on a specific activity on a specific Day
+                    Time spent on a specific Activity on a specific Day
                 </div>
                 <div class="chart-stage">
                     <div id="heatmap"></div>
@@ -141,21 +141,37 @@
                 <div class="chart-title">
                     Various Filter Options
                 </div>
-                <div id='filters' class="chart-stage">
+                <div id='filters' class="chart-stage filters">
                     <div id="select-sex"></div>
                     <div id="select-retired"></div>
                     <div id="select-bad-case"></div>
                     <div id="select-student"></div>
                     <div id="select-computer"></div>
                     <div id="select-vehicle"></div>
+                    <div id="select-hhtype"></div>
                     <div id="select-hhldsize"></div>
+                    <div id="select-nchild"></div>
                     <div id="select-singpar"></div>
+                    <div id="select-ownhome"></div>
                     <div id="select-sector"></div>
+                </div>
+                <div class="chart-stage filters">
                     <div id="select-empstat"></div>
+                    <div id="select-edcat"></div>
+                    <div id="select-urban"></div>
                     <div id="select-citizen"></div>
+                    <div id="select-civstat"></div>
+                    <div id="select-cohab"></div>
+                    <div id="select-emp"></div>
+                    <div id="select-unemp"></div>
+                    <div id="select-empsp"></div>
+                    <div id="select-rushed"></div>
+                    <div id="select-health"></div>
+                    <div id="select-carer"></div>
+                    <div id="select-disab"></div>
                 </div>
                 <div class="chart-notes">
-                    Use Shift or CMD click to select multiple items in the same Filter
+                    Use Shift or CMD click to select multiple items in the same filter
                 </div>
             </div>
         </div>

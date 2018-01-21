@@ -1,16 +1,21 @@
-/*
-    @Author: David Haas
+/**
+ * @Author: David Haas
  */
-//Javascript is async, use of queue ensures that Data is fully loaded before dc.js starts building charts
+/**
+ * Javascript is async, use of queue ensures that the data is fully loaded before dc.js starts building charts
+ */
 queue()
     .defer(d3.json, 'timeuse/data')
     .defer(d3.json, 'static/js/lib/custom.geo.json')
     .defer(d3.json, 'timeuse/params')
     .await(buildVisualisation);
 
-/*
-    TODO
-    Czech slovakia etc.
+/**
+ * This Section holds all the MTUS variables as keys, this is used to convert the specific key into something readable
+ */
+/**
+ * Some countries here have a slightly different Name than in the MTUS Guide,
+ * they have been renamed to correspond to the according geojson country, have a look at custom.geo.json
  */
 var countrya = {
     1: 'Armenia',
@@ -62,7 +67,8 @@ var day = {
     7: 'Saturday',
     8: 'Averaged time across Week',
     9: 'Unspecified weekday',
-    10: 'Unspecified weekend day'
+    10: 'Unspecified weekend day',
+    11: 'undefined'
 };
 var occup = {
     1: 'Management',
@@ -80,6 +86,40 @@ var occup = {
     13: 'Construction, assembly&repair, moving goods, transport,extraction',
     14: 'self employed non-professionals',
     15: 'Others/Undefined'
+};
+var badcase = {
+    0: 'Good case',
+    1: 'missing age or sex only',
+    2: 'missing day of the week only',
+    3: 'missing 91+ minutes in diary only',
+    4: '(1 to 6) <7 episodes only',
+    5: 'missing 2+ basic activities only',
+    6: 'missing age or sex & the day of week ',
+    7: 'missing age or sex & 91+ diary minutes',
+    8: 'missing age or sex & <7 episodes',
+    9: 'missing age or sex & 2+ basic activites',
+    10: 'missing the day of the week & 91+ diary minutes',
+    11: 'missing the day of the week & <7 episodes',
+    12: 'missing the day of the week & 2+ basic activites',
+    13: 'missing 91+ diary minutes & <7 episodes',
+    14: 'missing 91+ diary minutes & 2+ basic activites',
+    15: '<7 episodes & 2+ basic activites',
+    16: 'missing age or sex, the day of the week, & 91+ diary minutes',
+    17: 'missing age or sex, the day of the week, & <7 episodes',
+    18: 'missing age or sex, the day of the week, & 2+ basic activites',
+    19: 'missing age or sex, 91+ diary minutes, & <7 episodes',
+    20: 'missing age or sex, 91+ diary minutes, & 2+ basic activites',
+    21: 'missing age or sex, 2+ basic activites, & <7 episodes',
+    22: 'missing the day of the week, 91+ diary minutes, & <7 episodes',
+    23: 'missing the day of the week, 91+ diary minutes, & 2+ basic activites',
+    24: 'missing the day of the week, 2+ basic activites, & <7 episodes',
+    25: 'missing 91+ diary minutes, 2+ basic activites, & <7 episodes',
+    26: 'missing age or sex, the day of the week, 91+ diary minutes, & <7 episodes',
+    27: 'missing age or sex, the day of the week, 91+ diary minutes, & 2+ basic acts',
+    28: 'missing age or sex, the day of the week, <7 episodes, & 2+ basic activities',
+    29: 'missing age or sex, 91+ diary minutes, <7 episodes, & 2+ basic activities',
+    30: 'missing day of the week, 91+ diary minutes, <7 episodes, & 2+ basic acts',
+    31: 'bad case on all points '
 };
 var computer = {
     0: 'No',
@@ -115,7 +155,7 @@ var famstat = {
     3: 'Adult aged 40+ with no co-resident children <18',
     4: 'Respondent aged <18 and living with parent(s)/guardian(s)',
     5: 'Respondent aged <18, living arrangement other or unknown',
-    6: 'undefined'
+    '-7': 'undefined'
 };
 var activitiesCombined = {
     0: 'Undefined',
@@ -127,14 +167,172 @@ var activitiesCombined = {
     6: 'Personal, household, family care',
     7: 'Sleep & rest'
 };
+var singpar = {
+    0: 'No',
+    1: 'Yes'
+};
+var ownhome = {
+    1: 'Own',
+    2: 'Rent',
+    3: 'Other Arrangement',
+    '-9': 'not recorded'
+};
+var urban = {
+    1: 'Urban/Suburban',
+    2: 'Rural/Semi-rural'
+};
+var empstat = {
+    1: 'Employed Full Time',
+    2: 'Employed Part Time',
+    3: 'Employed, unknown status',
+    4: 'Not in paid work'
+};
+var edcat = {
+    1: 'uncompleted secondary or less',
+    2: 'completed secondary',
+    3: 'above secondary education'
+};
+var citizen = {
+    0: 'No',
+    1: 'Yes'
+};
+var civstat = {
+    1: 'Diarist in a couple',
+    2: 'No, diarist not in a couple'
+};
+var hhtype = {
+    1: 'One person household',
+    2: 'Couple alone',
+    3: 'Couple + others',
+    4: 'Other household types'
+};
+var cohab = {
+    '-7': 'Not in a couple',
+    0: 'Married/civil partners',
+    1: 'Cohabiting'
+};
+var actToolTip = {
+    1: 'imputed personal or household care',
+    2: 'sleep and naps',
+    3: 'imputed sleep',
+    4: 'wash, dress, care for self',
+    5: 'meals at work or school',
+    6: 'meals or snacks in other places',
+    7: 'paid work- job (not at home)',
+    8: 'paid work at home',
+    9: 'second or other job not at home',
+    10: 'unpaid work to generate household income',
+    11: 'travel as a part of work',
+    12: 'work breaks',
+    13: 'other time at workplace',
+    14: 'look for work',
+    15: 'regular schooling, education',
+    16: 'homework',
+    17: 'leisure & other education or training',
+    18: 'food preparation, cooking',
+    19: 'set table, wash/put away dishes',
+    20: 'cleaning',
+    21: 'laundry, ironing, clothing repair',
+    22: 'maintain home/vehicle, including collect fuel',
+    23: 'other domestic work',
+    24: 'purchase goods',
+    25: 'consume personal care services',
+    26: 'consume other services',
+    27: 'pet care (not walk dog)',
+    28: 'physical, medical child care',
+    29: 'teach, help with homework',
+    30: 'read to, talk or play with child',
+    31: 'supervise, accompany, other child care',
+    32: 'adult care',
+    33: 'voluntary, civic, organisational act',
+    34: 'worship and religion',
+    35: 'general out-of-home leisure',
+    36: 'attend sporting event',
+    37: 'cinema, theatre, opera, concert',
+    38: 'other public event, venue',
+    39: 'restaurant, café, bar, pub',
+    40: 'party, social event, gambling',
+    41: 'imputed time away from home',
+    42: 'general sport or exercise',
+    43: 'walking',
+    44: 'cycling',
+    45: 'other outside recreation',
+    46: 'gardening/pick mushrooms',
+    47: 'walk dogs',
+    48: 'receive or visit friends',
+    49: 'conversation (in person, phone)',
+    50: 'games (social & solitary)/other in-home social',
+    51: 'general indoor leisure',
+    52: 'art or music',
+    53: 'correspondence (not e-mail)',
+    54: 'knit, crafts or hobbies',
+    55: 'relax, think, do nothing',
+    56: 'read',
+    57: 'listen to music or other audio content',
+    58: 'listen to radio',
+    59: 'watch TV, video, DVD',
+    60: 'computer games',
+    61: 'e-mail, surf internet, computing',
+    62: 'no activity, imputed or recorded transport',
+    63: 'travel to/from work',
+    64: 'education travel',
+    65: 'voluntary/civic/religious travel',
+    66: 'child/adult care travel',
+    67: 'shop, person/hhld care travel',
+    68: 'other travel',
+    69: 'no recorded activity'
+};
+var emp = {
+    0: 'Not in paid work',
+    1: 'In paid work'
+};
+var unemp = {
+    0: 'Not-unemployed',
+    1: 'Unemployed'
+};
+var empsp = {
+    1: 'Employed full-time',
+    2: 'Employed part-time',
+    3: 'Employed, unknown hours',
+    4: 'Not in paid work',
+    '-7': 'Not in a couple'
+};
+var rushed = {
+    0: 'Almost never',
+    1: 'Sometimes',
+    2: 'Often'
+};
+var health = {
+    0: 'Poor',
+    1: 'Fair',
+    2: 'Good',
+    3: 'Very good'
+};
+var carer = {
+    0: 'No',
+    1: 'Yes'
+};
+var disab = {
+    0: 'No',
+    1: 'Yes'
+};
 
-function buildVisualisation(error, json, geoJson, params) {
-    console.log(error);
+/**
+ * @param {error} e
+ * @param {json} json
+ * @param {json} geoJson
+ * @param {json} params
+ * This function is used to create the whole Visualisation
+ */
+function buildVisualisation(e, json, geoJson, params) {
+    console.log(e);
     var cleanData = json;
+    /**
+     * Clean json, add some Fixes that are used for specific charts (i.e. bins)
+     */
     cleanData.forEach(function (d) {
         //Assign Countrynames, required for the GeoJson of the chloropleth Map
         d['countrya'] = countrya[d['countrya']];
-
         //Convert occupation into Text
         if (d['occup'] in occup) {
             d['occupFix'] = occup[d['occup']];
@@ -144,79 +342,48 @@ function buildVisualisation(error, json, geoJson, params) {
         if (d['famstat'] in famstat) {
             d['famstatFix'] = famstat[d['famstat']]
         }
-        else d['famstatFix'] = famstat[6];
-        //Combine Ages into Bins, CF bins work but do not filter correctly.
+        else d['famstatFix'] = famstat['-7'];
+        //Days into text, doing it via jQuery updates too slow and looks unclean
+        if (d['day'] in day)
+            d['dayFix'] = day[d['day']];
+        else
+            d['dayFix'] = day[11];
+        //Combine Ages into Bins, CF Bins work but do not filter correctly.
         if (d['age']) {
             if (d['age'] < 20) {
-                d['ageFix'] = 18;
+                d['ageFix'] = 'under 20';
             }
-            else d['ageFix'] = Math.floor(d['age'] / 10) * 10;
+            else {
+                var ageBin = Math.floor(d['age'] / 10) * 10;
+                d['ageFix'] = ageBin + ' - ' + (ageBin + 9);
+            }
         }
         else d['ageFix'] = 0;
         //Combine Workhours into Bins
         if (d['workhrs'] > 0) {
-            d['workhrsBin'] = Math.floor(d['workhrs'] / 20) * 20;
+            var workhrsBin = Math.floor(d['workhrs'] / 20) * 20;
+            d['workhrsBin'] = workhrsBin + ' - ' + (workhrsBin + 19);
         }
         else if (d['workhrs'] < 0) {
-            d['workhrsBin'] = 'undefined';
+            d['workhrsBin'] = 'not recorded';
         }
-        else d['workhrsBin'] = 0;
+        else d['workhrsBin'] = '0';
     });
 
-    //Create a Crossfilter
+    /**
+     * Create a crossfilter
+     */
     var ndx = crossfilter(cleanData);
-    //Show Total Amount of Records that are being filtered
+
+    /**
+     * Total amount of records currently being filter into
+     */
     var all = ndx.groupAll();
 
-    //Activity Pie Chart
-    //The Dimension doesnt really matter, as we cant sort on fake groups
-    var activities = ndx.dimension(function (d) {
-        return d['gAct'];
-    });
-
-    var activitiesGroup = activities.groupAll().reduce(reduceAddActivity, reduceRemoveActivity, reduceInitialActivity).value();
-
-    function reduceAddActivity(p, v) {
-        v['gAct'].forEach(function (val, index) {
-            if (!p[index])
-                p[index] = [val, 1];
-            else {
-                p[index][0] += val;
-                p[index][1] += 1;
-            }
-        });
-        return p;
-    }
-
-    function reduceRemoveActivity(p, v) {
-        v['gAct'].forEach(function (val, index) {
-            p[index][0] -= val;
-            p[index][1] -= 1;
-        });
-        return p;
-    }
-
-    function reduceInitialActivity() {
-        return {};
-    }
-
-    activitiesGroup.all = function () {
-        var newObject = [];
-        for (var key in this) {
-            if (this.hasOwnProperty(key) && key != 'all') {
-                var avg = 0;
-                if (this[key][1] > 0)
-                    avg = Math.round(this[key][0] / this[key][1]);
-                newObject.push({
-                    key: key,
-                    value: avg
-                });
-            }
-        }
-        return newObject;
-    };
-
-    //TimeChart
+    /**
+     * Timechart Years
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var years = ndx.dimension(function (d) {
         return d['year'];
     });
@@ -225,38 +392,59 @@ function buildVisualisation(error, json, geoJson, params) {
     var firstYear = years.bottom(1)[0]['year'];
     var lastYear = years.top(1)[0]['year'];
 
-    //Day of the Week
+    /**
+     * Barchart Days
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var days = ndx.dimension(function (d) {
-        return d['day'];
+        return d['dayFix'];
     });
     var recordsByDay = days.group();
 
-    //Chloropleth Map
+    /**
+     * Chloropleth GeoChart
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var countries = ndx.dimension(function (d) {
         return d['countrya']
     });
     var recordsByCountry = countries.group();
+    /**
+     * @var countryMax is used for the colorscheme in the chloropleth
+     */
     var countryMax = recordsByCountry.top(1)[0].value;
 
-    //Occupation Pie Chart
+    /**
+     * Occupation Piechart
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var occupation = ndx.dimension(function (d) {
         return d['occupFix']
     });
     var occupationGrouped = occupation.group();
 
-    //Age Distribution
+    /**
+     * Barchart age distribution
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var age = ndx.dimension(function (d) {
         return d['ageFix'];
     });
     var ageGrouped = age.group();
 
-    //Work Hours Distribution
+    /**
+     * Barchart Workhrs distribution
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var workHrs = ndx.dimension(function (d) {
         return d['workhrsBin'];
     });
     var workHrsGrouped = workHrs.group();
 
-    //Famstat Distribution
+    /**
+     * Barchart famstat
+     * @type {crossfilter.dimension|dc.baseMixin|*}
+     */
     var famstatDim = ndx.dimension(function (d) {
         return d['famstatFix'];
     });
@@ -270,10 +458,10 @@ function buildVisualisation(error, json, geoJson, params) {
         return d['sex'];
     });
     var sexGrouped = sexDim.group();
-    var badCase = ndx.dimension(function (d) {
+    var badcaseDim = ndx.dimension(function (d) {
         return d['badcase'];
     });
-    var badCaseGrouped = badCase.group();
+    var badCaseGrouped = badcaseDim.group();
     var retiredDim = ndx.dimension(function (d) {
         return d['retired'];
     });
@@ -298,16 +486,16 @@ function buildVisualisation(error, json, geoJson, params) {
         return d['sector'];
     });
     var sectorGrouped = sectorDim.group();
-    var singparDim = ndx.dimension(function(d){
+    var singparDim = ndx.dimension(function (d) {
         return d['singpar'];
     });
     var singparGrouped = singparDim.group();
-    var civstatDim = ndx.dimension(function(d){
+    var civstatDim = ndx.dimension(function (d) {
         return d['civstat'];
     });
     var civstatGrouped = civstatDim.group();
 
-    var citizenDim = ndx.dimension(function(d){
+    var citizenDim = ndx.dimension(function (d) {
         return d['citizen'];
     });
     var citizenGrouped = citizenDim.group();
@@ -315,14 +503,60 @@ function buildVisualisation(error, json, geoJson, params) {
         return d['empstat'];
     });
     var empstatGrouped = empstatDim.group();
+    var nchildDim = ndx.dimension(function (d) {
+        return d['nchild'];
+    });
+    var nchildGrouped = nchildDim.group();
+    var ownHomeDim = ndx.dimension(function (d) {
+        return d['ownhome'];
+    });
+    var ownHomeGrouped = ownHomeDim.group();
+    var edcatDim = ndx.dimension(function (d) {
+        return d['edcat'];
+    });
+    var edcatGrouped = edcatDim.group();
+    var hhtypeDim = ndx.dimension(function (d) {
+        return d['hhtype'];
+    });
+    var hhtypeGrouped = hhtypeDim.group();
+    var urbanDim = ndx.dimension(function (d) {
+        return d['urban'];
+    });
+    var urbanGrouped = urbanDim.group();
+    var cohabDim = ndx.dimension(function (d) {
+        return d['cohab'];
+    });
+    var cohabGrouped = cohabDim.group();
+    var empDim = ndx.dimension(function (d) {
+        return d['emp'];
+    });
+    var empGrouped = empDim.group();
+    var unempDim = ndx.dimension(function (d) {
+        return d['unemp'];
+    });
+    var unempGrouped = unempDim.group();
+    var empspDim = ndx.dimension(function (d) {
+        return d['empsp'];
+    });
+    var empspGrouped = empspDim.group();
+    var rushedDim = ndx.dimension(function (d) {
+        return d['rushed'];
+    });
+    var rushedGrouped = rushedDim.group();
+    var healthDim = ndx.dimension(function (d) {
+        return d['health'];
+    });
+    var healthGrouped = healthDim.group();
 
-    //Charts HTML tags
+    /**
+     * Define the type of dc.js Chart and the corresponding HTML tag
+     */
     var totalRecords = dc.numberDisplay('#total-records');
     var timeChart = dc.barChart('#timeChart');
-    var ageChart = dc.rowChart('#ageChart');
-    var weekDay = dc.rowChart('#weekDay');
-    var workHrsChart = dc.rowChart('#workhrs');
-    var famstatChart = dc.rowChart('#famstat');
+    var ageBarchart = dc.rowChart('#ageChart');
+    var weekdayBarchart = dc.rowChart('#weekDay');
+    var workHrsBarchart = dc.rowChart('#workhrs');
+    var famstatBarchart = dc.rowChart('#famstat');
     var chloropleth = dc.geoChoroplethChart('#chloropleth');
     var occupationPieChart = dc.pieChart('#occupation-piechart');
     var selectSex = dc.selectMenu('#select-sex');
@@ -336,17 +570,34 @@ function buildVisualisation(error, json, geoJson, params) {
     var selectEmpstat = dc.selectMenu('#select-empstat');
     var selectSingpar = dc.selectMenu('#select-singpar');
     var selectCitizen = dc.selectMenu('#select-citizen');
-    //var selectCohab = dc.selectMenu('select-cohab');
-    var selectCivstat = dc.selectMenu('select-civstat');
-    var activityGroupPieChart = dc.pieChart('#groupedActivities');
+    var selectNchild = dc.selectMenu('#select-nchild');
+    var selectEdcat = dc.selectMenu('#select-edcat');
+    var selectHhtype = dc.selectMenu('#select-hhtype');
+    var selectUrban = dc.selectMenu('#select-urban');
+    var selectCohab = dc.selectMenu('#select-cohab');
+    var selectOwnhome = dc.selectMenu('#select-ownhome');
+    var selectCivstat = dc.selectMenu('#select-civstat');
+    var selectEmp = dc.selectMenu('#select-emp');
+    var selectUnemp = dc.selectMenu('#select-unemp');
+    var selectEmpsp = dc.selectMenu('#select-empsp');
+    var selectRushed = dc.selectMenu('#select-rushed');
+    var selectHealth = dc.selectMenu('#select-health');
 
+
+    /**
+     *
+     * Assign Dimension,Group,Colors etc. to all those Charts
+     *
+     */
     totalRecords
         .formatNumber(d3.format('d'))
         .valueAccessor(function (d) {
             return d;
         })
         .group(all);
-
+    /**
+     * Timechart
+     */
     timeChart
         .width(620)
         .height(150)
@@ -360,43 +611,48 @@ function buildVisualisation(error, json, geoJson, params) {
         .xAxisLabel('Year')
         .yAxisLabel('Records')
         .yAxis().ticks(5);
+    //Remove Commas from Years
+    timeChart.xAxis().tickFormat(d3.format('d'));
 
-    ageChart
+    ageBarchart
         .width(320)
         .height(200)
         .dimension(age)
         .elasticX(true)
         .group(ageGrouped)
+        .gap(1)
         .xAxis().ticks(4);
-    ageChart.on('postRender', function (chart) {
-        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekDay.width() / 2).attr('y', weekDay.height())
+    ageBarchart.on('postRender', function (chart) {
+        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekdayBarchart.width() / 2).attr('y', weekdayBarchart.height())
             .text('Records');
     });
 
-    famstatChart
+    famstatBarchart
         .width(320)
         .height(200)
         .dimension(famstatDim)
         .elasticX(true)
         .group(famstatGrouped)
+        .gap(1)
         .xAxis().ticks(2);
-    famstatChart.on('postRender', function (chart) {
-        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekDay.width() / 2).attr('y', weekDay.height())
+    famstatBarchart.on('postRender', function (chart) {
+        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekdayBarchart.width() / 2).attr('y', weekdayBarchart.height())
             .text('Records');
     });
 
-    workHrsChart
+    workHrsBarchart
         .width(320)
         .height(200)
         .dimension(workHrs)
         .elasticX(true)
         .group(workHrsGrouped)
+        .gap(1)
         .xAxis().ticks(2);
-    workHrsChart.on('postRender', function (chart) {
-        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekDay.width() / 2).attr('y', weekDay.height())
+    workHrsBarchart.on('postRender', function (chart) {
+        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekdayBarchart.width() / 2).attr('y', weekdayBarchart.height())
             .text('Records');
     });
-    weekDay
+    weekdayBarchart
         .width(320)
         .height(200)
         .dimension(days)
@@ -407,17 +663,20 @@ function buildVisualisation(error, json, geoJson, params) {
         })
         .elasticX(true)
         .xAxis().ticks(5);
-    weekDay.on('postRender', function (chart) {
-        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekDay.width() / 2).attr('y', weekDay.height())
+    weekdayBarchart.on('postRender', function (chart) {
+        chart.svg().append('text').attr('class', 'x-axis-label').attr('text-anchor', 'middle').attr('x', weekdayBarchart.width() / 2).attr('y', weekdayBarchart.height())
             .text('Records');
     });
 
+    /**
+     * Chloropleth Map
+     */
     chloropleth
         .width(700)
         .height(415)
         .dimension(countries)
         .group(recordsByCountry)
-        .colors(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
+        .colors(d3.scale.linear().range(['#E2F2FF', '#0061B5']))
         .colorDomain([0, countryMax])
         .overlayGeoJson(geoJson.features, 'name', function (d) {
             return d.properties.name;
@@ -426,10 +685,12 @@ function buildVisualisation(error, json, geoJson, params) {
             .scale(500)
             .translate([350, 220])
             .center([20, 50]))
-        .title(function (t) {
-            return 'Country: ' + t['key'] + '\n' + 'Records: ' + t['value'];
+        .title(function (d) {
+            return 'Country: ' + d['key'] + '\n' + 'Records: ' + d['value'];
         });
-
+    /**
+     * Occupation Pie Chart
+     */
     occupationPieChart
         .width(250)
         .height(250)
@@ -442,36 +703,31 @@ function buildVisualisation(error, json, geoJson, params) {
         return d.name;
     });
 
-    activityGroupPieChart
-        .width(450)
-        .height(230)
-        .externalRadiusPadding(30)
-        .dimension(activities)
-        .group(activitiesGroup)
-        .innerRadius(40)
-        .externalLabels(20)
-        .legend(dc.legend().x(250).y(0).gap(12).legendText(function (d){
-            if(d.name in activitiesCombined)
-                return activitiesCombined[d.name];
-        }))
-        .cx(120)
-        .title(function(d){
-            return 'Average time spent: ' + d.value + '\n' + activitiesCombined[d.key];
-        })
-        .renderLabel(true);
-        //.colors(d3.scale.ordinal().domain([1,2,3,4,5,6,7]).range(["#D82C8C", "#17A7CF", "#23e578","#D82C8C", "#17A7CF", "#E58304","#23E578"])));
-    activityGroupPieChart.on('pretransition', function(chart) {
-        chart.selectAll('text.pie-slice').text(function(d) {
-            if ((d.endAngle - d.startAngle) < (5*Math.PI/180))
-                return '';
-            return Math.round(dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2*Math.PI) * 100)) + '%';
-        })
-    });
-    /*
-        Disable the onclick event, since we cant filter
+    /**
+     * This function takes the text value gotten via JQuery and the Object we want to find the key in
+     * In order to convert it into a more readable form
+     * If no key is found we keep the default text
+     *
+     * @param {string} text
+     * @param {Object} obj
+     * @returns {String}
      */
-    activityGroupPieChart.filter = function() {};
+    function replaceSelectText(text, obj) {
+        var substring1 = text.substring(0, text.indexOf(':'));
+        var substring2 = text.substring(text.indexOf(':'));
+        if (obj[substring1]) {
+            substring1 = obj[substring1];
+            return (substring1 + substring2);
+        }
+        else
+            return text;
+    }
 
+    /**
+     * All the different select Menus
+     * The title is added via JQuery
+     * The values are replaced by text using the replaceSelectText function
+     */
     selectSex
         .dimension(sexDim)
         .group(sexGrouped)
@@ -479,12 +735,7 @@ function buildVisualisation(error, json, geoJson, params) {
         .controlsUseVisibility(true)
         .on('renderlet', function () {
             $('#select-sex option.dc-select-option').each(function () {
-                var value = $(this).text();
-                var valuesubstring = value.substring(0, value.indexOf(':'));
-                if (sex[valuesubstring]) {
-                    value = value.replace(valuesubstring, sex[valuesubstring]);
-                    $(this).text(value);
-                }
+                $(this).text(replaceSelectText($(this).text(), sex));
             });
         }).on('postRender', function () {
         $('#select-sex').prepend($('<div class="select-title">Sex</div>'));
@@ -496,18 +747,13 @@ function buildVisualisation(error, json, geoJson, params) {
         .controlsUseVisibility(true)
         .on('renderlet', function () {
             $('#select-retired option.dc-select-option').each(function () {
-                var value = $(this).text();
-                var valuesubstring = value.substring(0, value.indexOf(':'));
-                if (retired[valuesubstring]) {
-                    value = value.replace(valuesubstring, retired[valuesubstring]);
-                    $(this).text(value);
-                }
+                $(this).text(replaceSelectText($(this).text(), retired));
             });
         }).on('postRender', function () {
         $('#select-retired').prepend($('<div class="select-title">Retired</div>'));
     });
     selectBadCase
-        .dimension(badCase)
+        .dimension(badcaseDim)
         .group(badCaseGrouped)
         .multiple(true)
         .controlsUseVisibility(true);
@@ -521,12 +767,7 @@ function buildVisualisation(error, json, geoJson, params) {
         .controlsUseVisibility(true)
         .on('renderlet', function () {
             $('#select-student option.dc-select-option').each(function () {
-                var value = $(this).text();
-                var valuesubstring = value.substring(0, value.indexOf(':'));
-                if (student[valuesubstring]) {
-                    value = value.replace(valuesubstring, student[valuesubstring]);
-                    $(this).text(value);
-                }
+                $(this).text(replaceSelectText($(this).text(), student));
             });
         }).on('postRender', function () {
         $('#select-student').prepend($('<div class="select-title">Student</div>'));
@@ -541,13 +782,7 @@ function buildVisualisation(error, json, geoJson, params) {
         .controlsUseVisibility(true)
         .on('renderlet', function () {
             $('#select-computer option.dc-select-option').each(function () {
-                var value = $(this).text();
-                var substring1 = value.substring(0, value.indexOf(':'));
-                var substring2 = value.substring(value.indexOf(':'));
-                if (computer[substring1]) {
-                    substring1 = computer[substring1];
-                    $(this).text(substring1 + substring2);
-                }
+                $(this).text(replaceSelectText($(this).text(), computer));
             });
         }).on('postRender', function () {
         $('#select-computer').prepend($('<div class="select-title">Computer</div>'));
@@ -562,12 +797,7 @@ function buildVisualisation(error, json, geoJson, params) {
         .controlsUseVisibility(true)
         .on('renderlet', function () {
             $('#select-vehicle option.dc-select-option').each(function () {
-                var value = $(this).text();
-                var valuesubstring = value.substring(0, value.indexOf(':'));
-                if (vehicle[valuesubstring]) {
-                    value = value.replace(valuesubstring, vehicle[valuesubstring]);
-                    $(this).text(value);
-                }
+                $(this).text(replaceSelectText($(this).text(), vehicle));
             });
         }).on('postRender', function () {
         $('#select-vehicle').prepend($('<div class="select-title">Vehicle</div>'));
@@ -582,12 +812,7 @@ function buildVisualisation(error, json, geoJson, params) {
         .controlsUseVisibility(true)
         .on('renderlet', function () {
             $('#select-sector option.dc-select-option').each(function () {
-                var value = $(this).text();
-                var valuesubstring = value.substring(0, value.indexOf(':'));
-                if (vehicle[valuesubstring]) {
-                    value = value.replace(valuesubstring, sector[valuesubstring]);
-                    $(this).text(value);
-                }
+                $(this).text(replaceSelectText($(this).text(), sector));
             });
         }).on('postRender', function () {
         $('#select-sector').prepend($('<div class="select-title">Sector</div>'));
@@ -596,145 +821,207 @@ function buildVisualisation(error, json, geoJson, params) {
         .dimension(hhldsize)
         .group(hhldsizeGrouped)
         .multiple(true)
-        .controlsUseVisibility(true).on('postRender', function () {
-        $('#select-hhldsize').prepend($('<div class="select-title">Hhold Size</div>'));
-    });
-
+        .controlsUseVisibility(true)
+        .on('postRender', function () {
+            $('#select-hhldsize').prepend($('<div class="select-title">Hhold Size</div>'));
+        });
     selectCitizen
         .dimension(citizenDim)
         .group(citizenGrouped)
         .multiple(true)
-        .controlsUseVisibility(true).on('postRender', function () {
-        $('#select-citizen').prepend($('<div class="select-title">Citizen</div>'));
-    });
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-citizen option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), citizen));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-citizen').prepend($('<div class="select-title">Citizen</div>'));
+        });
     selectEmpstat
         .dimension(empstatDim)
         .group(empstatGrouped)
         .multiple(true)
-        .controlsUseVisibility(true).on('postRender', function () {
-        $('#select-empstat').prepend($('<div class="select-title">Employementstat</div>'));
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-empstat option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), empstat));
+            });
+        }).on('postRender', function () {
+        $('#select-empstat').prepend($('<div class="select-title">Employmentstat</div>'));
     });
     selectSingpar
         .dimension(singparDim)
         .group(singparGrouped)
         .multiple(true)
-        .controlsUseVisibility(true).on('postRender', function () {
-        $('#select-singpar').prepend($('<div class="select-title">Single Parent</div>'));
-    });
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-singpar option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), singpar));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-singpar').prepend($('<div class="select-title">Single Parent</div>'));
+        });
     selectCivstat
         .dimension(civstatDim)
         .group(civstatGrouped)
         .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-civstat option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), civstat));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-civstat').prepend($('<div class="select-title">Civstat</div>'));
+        });
+    selectNchild
+        .dimension(nchildDim)
+        .group(nchildGrouped)
+        .multiple(true)
         .controlsUseVisibility(true).on('postRender', function () {
-        $('#select-civstat').prepend($('<div class="select-title">Civstat</div>'));
+        $('#select-nchild').prepend($('<div class="select-title"># Children</div>'));
     });
-
-
-
-    //Create Tooltip for Badcase (refer to page 29 of the MTUS user guide)
+    selectOwnhome
+        .dimension(ownHomeDim)
+        .group(ownHomeGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-ownhome option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), ownhome));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-ownhome').prepend($('<div class="select-title">Own Home</div>'));
+        });
+    selectEdcat
+        .dimension(edcatDim)
+        .group(edcatGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-edcat option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), edcat));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-edcat').prepend($('<div class="select-title">Education</div>'));
+        });
+    selectHhtype
+        .dimension(hhtypeDim)
+        .group(hhtypeGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-hhtype option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), hhtype));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-hhtype').prepend($('<div class="select-title">Hhold Type</div>'));
+        });
+    selectUrban
+        .dimension(urbanDim)
+        .group(urbanGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-urban option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), urban));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-urban').prepend($('<div class="select-title">Urban</div>'));
+        });
+    selectCohab
+        .dimension(cohabDim)
+        .group(cohabGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-cohab option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), cohab));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-cohab').prepend($('<div class="select-title">Cohab</div>'));
+        });
+    selectEmp
+        .dimension(empDim)
+        .group(empGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-emp option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), emp));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-emp').prepend($('<div class="select-title">Employment</div>'));
+        });
+    selectUnemp
+        .dimension(unempDim)
+        .group(unempGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-unemp option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), unemp));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-unemp').prepend($('<div class="select-title">Unemployed</div>'));
+        });
+    selectEmpsp
+        .dimension(empspDim)
+        .group(empspGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-empsp option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), empsp));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-empsp').prepend($('<div class="select-title">Spouse Employment</div>'));
+        });
+    selectRushed
+        .dimension(rushedDim)
+        .group(rushedGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-rushed option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), rushed));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-rushed').prepend($('<div class="select-title">Rushed</div>'));
+        });
+    selectHealth
+        .dimension(healthDim)
+        .group(healthGrouped)
+        .multiple(true)
+        .controlsUseVisibility(true)
+        .on('renderlet', function () {
+            $('#select-health option.dc-select-option').each(function () {
+                $(this).text(replaceSelectText($(this).text(), health));
+            });
+        })
+        .on('postRender', function () {
+            $('#select-health').prepend($('<div class="select-title">Health</div>'));
+        });
+    /**
+     * Create Tooltip for Bad Case Select Menu (refer to page 29 of the MTUS user guide)
+     */
     selectBadCase.on('renderlet', function () {
         $('#select-bad-case option.dc-select-option').each(function () {
-                switch ($(this).attr('value')) {
-                    case '0':
-                        $(this).attr('title', 'Good case');
-                        break;
-                    case '1':
-                        $(this).attr('title', 'missing age or sex only');
-                        break;
-                    case '2':
-                        $(this).attr('title', 'missing day of the week only');
-                        break;
-                    case '3':
-                        $(this).attr('title', 'missing 91+ minutes in diary only');
-                        break;
-                    case '4':
-                        $(this).attr('title', '(1 to 6) <7 episodes only');
-                        break;
-                    case '5':
-                        $(this).attr('title', 'missing 2+ basic activities only');
-                        break;
-                    case '6':
-                        $(this).attr('title', 'missing age or sex & the day of week ');
-                        break;
-                    case '7':
-                        $(this).attr('title', 'missing age or sex & 91+ diary minutes');
-                        break;
-                    case '8':
-                        $(this).attr('title', 'missing age or sex & <7 episodes');
-                        break;
-                    case '9':
-                        $(this).attr('title', 'missing age or sex & 2+ basic activites');
-                        break;
-                    case '10':
-                        $(this).attr('title', 'missing the day of the week & 91+ diary minutes');
-                        break;
-                    case '11':
-                        $(this).attr('title', 'missing the day of the week & <7 episodes');
-                        break;
-                    case '12':
-                        $(this).attr('title', 'missing the day of the week & 2+ basic activites');
-                        break;
-                    case '13':
-                        $(this).attr('title', 'missing 91+ diary minutes & <7 episodes');
-                        break;
-                    case '14':
-                        $(this).attr('title', 'missing 91+ diary minutes & 2+ basic activites');
-                        break;
-                    case '15':
-                        $(this).attr('title', '<7 episodes & 2+ basic activites');
-                        break;
-                    case '16':
-                        $(this).attr('title', 'missing age or sex, the day of the week, & 91+ diary minutes');
-                        break;
-                    case '17':
-                        $(this).attr('title', 'missing age or sex, the day of the week, & <7 episodes');
-                        break;
-                    case '18':
-                        $(this).attr('title', 'missing age or sex, the day of the week, & 2+ basic activites');
-                        break;
-                    case '19':
-                        $(this).attr('title', 'missing age or sex, 91+ diary minutes, & <7 episodes');
-                        break;
-                    case '20':
-                        $(this).attr('title', 'missing age or sex, 91+ diary minutes, & 2+ basic activites');
-                        break;
-                    case '21':
-                        $(this).attr('title', 'missing age or sex, 2+ basic activites, & <7 episodes');
-                        break;
-                    case '22':
-                        $(this).attr('title', 'missing the day of the week, 91+ diary minutes, & <7 episodes');
-                        break;
-                    case '23':
-                        $(this).attr('title', 'missing the day of the week, 91+ diary minutes, & 2+ basic activites');
-                        break;
-                    case '24':
-                        $(this).attr('title', 'missing the day of the week, 2+ basic activites, & <7 episodes');
-                        break;
-                    case '25':
-                        $(this).attr('title', 'missing 91+ diary minutes, 2+ basic activites, & <7 episodes');
-                        break;
-                    case '26':
-                        $(this).attr('title', 'missing age or sex, the day of the week, 91+ diary minutes, & <7 episodes');
-                        break;
-                    case '27':
-                        $(this).attr('title', 'missing age or sex, the day of the week, 91+ diary minutes, & 2+ basic acts');
-                        break;
-                    case '28':
-                        $(this).attr('title', 'missing age or sex, the day of the week, <7 episodes, & 2+ basic activities');
-                        break;
-                    case '29':
-                        $(this).attr('title', 'missing age or sex, 91+ diary minutes, <7 episodes, & 2+ basic activities');
-                        break;
-                    case '30':
-                        $(this).attr('title', 'missing day of the week, 91+ diary minutes, <7 episodes, & 2+ basic acts');
-                        break;
-                    case '31':
-                        $(this).attr('title', 'bad case on all points ');
-                        break;
-                    default:
-                        $(this).attr('title', 'undefined');
-
-                }
+                if ($(this).attr('value') in badcase)
+                    $(this).attr('title', badcase[$(this).attr('value')]);
+                else
+                    $(this).attr('title', 'undefined');
                 $(this).tooltip();
             }
         );
@@ -742,28 +1029,151 @@ function buildVisualisation(error, json, geoJson, params) {
     selectBadCase.on('postRender', function () {
         $('#select-bad-case').prepend($('<div class="select-title">Badcase</div>'));
     });
+    /**
+     * Conditional Grouped Activities, if the param has been provided via console, render it
+     */
+    if (params[0] && params[0]['groupedActivities'] === 1) {
+        /**
+         * Grouped Activities
+         * @type {crossfilter.dimension|dc.baseMixin|*}
+         * The Dimension doesn't really matter, as we can't sort on fake groups
+         */
+        var activities = ndx.dimension(function (d) {
+            return d['gAct'];
+        });
 
-    //Heatmap
+        var activitiesGroup = activities.groupAll().reduce(reduceAddActivity, reduceRemoveActivity, reduceInitialActivity).value();
+
+        /**
+         * Add a Record, if p does not have the key yet, create it
+         * @param {Object} p - Filter Object
+         * @param {Object} v - current object being evaluated
+         * @returns {Object}
+         */
+        function reduceAddActivity(p, v) {
+            v['gAct'].forEach(function (val, index) {
+                if (!p[index])
+                    p[index] = [val, 1];
+                else {
+                    p[index][0] += val;
+                    p[index][1] += 1;
+                }
+            });
+            return p;
+        }
+
+        /**
+         * Remove a Record
+         * @param {Object} p - Filter Object
+         * @param {Object} v - current object being evaluated
+         * @returns {Object}
+         */
+        function reduceRemoveActivity(p, v) {
+            v['gAct'].forEach(function (val, index) {
+                p[index][0] -= val;
+                p[index][1] -= 1;
+            });
+            return p;
+        }
+
+        /**
+         * Initialize, empty because we add the keys dynamically
+         * @returns {{}}
+         */
+        function reduceInitialActivity() {
+            return {};
+        }
+
+        /**
+         * Group all the activities and calculate the average, push into array
+         * @returns {Array}
+         */
+        activitiesGroup.all = function () {
+            var newObject = [];
+            for (var key in this) {
+                if (this.hasOwnProperty(key) && key != 'all') {
+                    var avg = 0;
+                    if (this[key][1] > 0)
+                        avg = Math.round(this[key][0] / this[key][1]);
+                    newObject.push({
+                        key: key,
+                        value: avg
+                    });
+                }
+            }
+            return newObject;
+        };
+        var activityGroupPieChart = dc.pieChart('#groupedActivities');
+        /**
+         * Grouped Activities Pie Chart
+         */
+        activityGroupPieChart
+            .width(450)
+            .height(230)
+            .externalRadiusPadding(30)
+            .dimension(activities)
+            .group(activitiesGroup)
+            .innerRadius(40)
+            .externalLabels(20)
+            .legend(dc.legend().x(250).y(0).gap(12).legendText(function (d) {
+                if (d.name in activitiesCombined)
+                    return activitiesCombined[d.name];
+            }))
+            .cx(120)
+            .title(function (d) {
+                return 'Average time spent: ' + d.value + '\n' + activitiesCombined[d.key];
+            })
+            .renderLabel(true);
+        /**
+         * Get Percentages for the Pie Chart
+         */
+        activityGroupPieChart.on('pretransition', function (chart) {
+            // Get Percentages by calculating the Pie Slice
+            chart.selectAll('text.pie-slice').text(function (d) {
+                if ((d.endAngle - d.startAngle) < (5 * Math.PI / 180))
+                    return '';
+                return Math.round(dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2 * Math.PI) * 100)) + '%';
+            })
+        });
+        // Disable onClick handler since we can't filter on fake groups
+        activityGroupPieChart.filter = function () {
+        };
+
+    }
+
+    /**
+     * Conditional Heatmap, if the param has been provided via console, render it
+     */
     if (params[0] && params[0]['heatmap'] === 1) {
-        //The dimension doesnt really matter, since you won't be able filter on it.
+        //The dimension doesnt really matter, since you won't be able to filter on it.
         var heatDim = ndx.dimension(function (d) {
             return [d['day'], d['main']];
         });
         var heatGroup = heatDim.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
-        /*
-            Custom reduce functions, to work with arrays, activities are converted into the following:
-            'day,main': value
-            for example: 11: 10
+        /**
+         *  Custom reduce functions, to work with arrays, activities are converted into the following:
+         'day,main': [value,count]
+         for example: 121: 10
+         If a record gets added example:
+         v['day'] = 1 && v['main'][21] = 10
+         then
+         p[121] = [10,1]
+         If another gets added:
+         v['day'] = 1 && v['main'][21] = 20
+         then
+         p[121] = [30,2]
          */
-        //Add up all selected records -> p[key] = [value,count]
-        //For example p[11] = [20,2]
+        /**
+         * Add a record
+         * @param {Object} p - Filter Object
+         * @param {Object} v - the current record being evaluated
+         * @returns {Object}
+         */
         function reduceAdd(p, v) {
             v['main'].forEach(function (val, index) {
                 //+1 since Activity 0 is not a thing, but the first index of the array is 0
-                var key = v['day'].concatenate(index + 1);
-                //if(!p[key] = []
-                //p[key].push(val)
+                var key = concatenateNumber(v['day'],index + 1);
                 if (!p[key])
                     p[key] = [val, 1];
                 else {
@@ -774,32 +1184,49 @@ function buildVisualisation(error, json, geoJson, params) {
             return p;
         }
 
+        /**
+         * Remove a record
+         * @param {Object} p - Filter Object
+         * @param {Object} v - the current record being evaluated
+         * @returns {Object}
+         */
         function reduceRemove(p, v) {
             v['main'].forEach(function (val, index) {
-                var key = v['day'].concatenate(index + 1);
-                //var indexOfValue = p[key].indexOf(val);
-                //p[key].splice(indexOfValue,1);
+                //+1 since Activity 0 is not a thing, but the first index of the array is 0
+                var key = concatenateNumber(v['day'],index + 1);
                 p[key][1] -= 1;
                 p[key][0] -= val;
             });
             return p;
         }
 
+        /**
+         * Initialize, empty because we add the keys dynamically
+         * @returns {{}}
+         */
         function reduceInitial() {
             return {};
         }
 
+        /**
+         * Group all selected records, extract the activity and day from the Key
+         * and calculate the average, push into an array
+         * @returns {Array}
+         */
         heatGroup.all = function () {
             var newObject = [];
             for (var key in this) {
                 if (this.hasOwnProperty(key) && key != 'all') {
-                    var digits = getNumberOfDigits(key);
+                    /*
+                        Get the number of Digits from the key i.e. 123 = 3
+                        Then Splice the number so we can split day and activity
+                     */
+                    var digits = getNumberOfDigits(+key);
                     var activity = digits < 3 ? key % 10 : key % 100;
                     var day = digits < 3 ? Math.floor(key / 10) % 10 : Math.floor(key / 100) % 100;
                     var avg = 0;
                     if (this[key][1] > 0)
                         avg = Math.round(this[key][0] / this[key][1]);
-                    //var avg = _.reduce(this[key], function(memo, num) {return memo + num;}, 0) / (this[key].length === 0 ? 1 : this[key].length);
                     newObject.push({
                         day: day,
                         activity: activity,
@@ -828,12 +1255,12 @@ function buildVisualisation(error, json, geoJson, params) {
             .rows([2, 3, 4, 5, 6, 7, 1])
             .cols([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
                 , 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69])
-            .colors(d3.scale.linear().range(['white', 'darkblue']))
+            .colors(d3.scale.linear().range(['white', 'darkgreen']))
             .title(function (d) {
                 return 'Avg: ' + (d.avg);
             })
-            .rowsLabel(function(d){
-                if(d in day)
+            .rowsLabel(function (d) {
+                if (d in day)
                     return day[d];
             })
             .xBorderRadius(2)
@@ -843,22 +1270,39 @@ function buildVisualisation(error, json, geoJson, params) {
                 $('.heatmap').attr('transform', 'translate(60,10)');
             });
 
-        /*
-            Disable the filter function
+        /**
+         *   Disable the filter function
          */
-            heatMap.filter = function() {};
-    }
+        heatMap.filter = function () {
+        };
 
-    //Download as CSV Function
+        /**
+         *   Create the tooltips for all activities
+         */
+        heatMap.on('renderlet', function () {
+            $('#heatmap g > g > text').each(function () {
+                    if ($(this).text() in actToolTip) {
+                        $(this).attr('title', actToolTip[$(this).text()]);
+                        $(this).tooltip();
+                    }
+                }
+            );
+        });
+    }
+    /**
+     * Download as CSV
+     */
     d3.select('#download')
         .on('click', function () {
             var data = years.top(Infinity);
-            console.log(data[0]);
             var objects = [];
             //Reverse the replaced data, find by key (thanks underscore.js)
             data.forEach(function (d) {
                 d['countrya'] = parseInt((_.invert(countrya))[d['countrya']]);
-                //sort the Object according to initial data ordering, else the CSV could have random column ordering
+                /*
+                    create the Object according to initial data ordering, else the CSV could have random column ordering
+                    Exporting directly to CSV results in random column ordering
+                 */
                 var tempObject = {
                     countrya: d['countrya'],
                     survey: d['survey'],
@@ -1032,15 +1476,31 @@ function buildVisualisation(error, json, geoJson, params) {
 
     //Hide the loading overlay once dc.js is done creating all the initial charts
     $.LoadingOverlay('hide');
-
+    //Finally render all the charts
     dc.renderAll();
-
 }
 
-Number.prototype.concatenate = function (b) {
-    return this * Math.pow(10, Math.floor(Math.log(b) / Math.log(10)) + 1) + b;
-};
+/**
+ * Concatenate 2 Numbers
+ * This is used to create the keys for the Heatmap dynamically
+ * Number1 is the day and Number2 is the activity
+ * So day:1 & activity22 becomes 122 instead of 23
+ * @param {number} a - the first number to concatenate
+ * @param {number} b - the 2nd number to concatenate
+ * @returns {number}
+ */
+function concatenateNumber(a,b) {
+    return parseInt(String(a) + String(b))
+}
 
+/**
+ * Calculate the #Digits a number has
+ * This is used to split the keys for the Heatmap again into day & activity
+ * The first digit is the day and the remaining digits are the activity
+ * So 134 would be day:1 & activity:34
+ * @param {number} Number
+ * @returns {number}
+ */
 function getNumberOfDigits(Number) {
-    return Math.max(Math.floor(Math.log10(Math.abs(Number))), 0) + 1;
+    return Math.floor(Math.log10(Number)) + 1;
 }
