@@ -1,15 +1,14 @@
+
 # Timeuse Datavisualisation
+
 This application visualizes the MTUS-adult-aggregate.csv file from [The Centre For Time Use Research](https://timeuse.org/)
-Skimming over their [Multinational Time Use Study Documentation](https://www.timeuse.org/sites/default/files/9727/mtus-user-guide-r9-february-2016.pdf)
-is recommended
----
+Skimming over their [Multinational Time Use Study Documentation](https://www.timeuse.org/sites/default/files/9727/mtus-user-guide-r9-february-2016.pdf) is recommended
 ### Requirements
 - Python 2.7
 - mongodb
 - pip
 ---
 ## How to set it up
-
 Install the necessary requirements
 
     $ pip install -r requirements.txt
