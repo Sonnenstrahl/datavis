@@ -102,5 +102,11 @@ def not_found(e):
     return render_template('404.html'), 404
 
 
+# Jasmine testing
+@app.route('/tests')
+def tests():
+    return render_template('SpecRunner.html'), 200
+
+
 if __name__ == '__main__':
     app.run(host=cfg.APP_HOST, port=cfg.APP_PORT, debug=True)

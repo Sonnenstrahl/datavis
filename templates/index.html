@@ -94,7 +94,7 @@
                     Days of the Week
                 </div>
                 <div class="chart-stage">
-                    <div id="weekDay"></div>
+                    <div id="day"></div>
                 </div>
                 <div class="chart-title">
                     Family Status
@@ -110,7 +110,7 @@
                     Age Group
                 </div>
                 <div class="chart-stage">
-                    <div id="ageChart"></div>
+                    <div id="age"></div>
                 </div>
                 <div class="chart-title">
                     Work Hours
@@ -144,7 +144,7 @@
                 <div id='filters' class="chart-stage filters">
                     <div id="select-sex"></div>
                     <div id="select-retired"></div>
-                    <div id="select-bad-case"></div>
+                    <div id="select-badcase"></div>
                     <div id="select-student"></div>
                     <div id="select-computer"></div>
                     <div id="select-vehicle"></div>
@@ -194,6 +194,8 @@
 <script src="{{ url_for('static', filename='js/lib/jquery-ui.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lib/underscore-min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/helper_functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/mtus_vars.js') }}"></script>
 <script>$.LoadingOverlay('show');</script>
 </body>
 </html>
