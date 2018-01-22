@@ -326,6 +326,10 @@ var disab = {
  */
 function buildVisualisation(e, json, geoJson, params) {
     console.log(e);
+    /**
+     *
+     * @type {json}
+     */
     var cleanData = json;
     /**
      * Clean json, add some Fixes that are used for specific charts (i.e. bins)
@@ -362,7 +366,12 @@ function buildVisualisation(e, json, geoJson, params) {
         //Combine Workhours into Bins
         if (d['workhrs'] > 0) {
             var workhrsBin = Math.floor(d['workhrs'] / 20) * 20;
-            d['workhrsBin'] = workhrsBin + ' - ' + (workhrsBin + 19);
+            if (workhrsBin>=100){
+                d['workhrsBin'] = '100+';
+            }
+            else{
+                d['workhrsBin'] = workhrsBin + ' - ' + (workhrsBin + 19);
+            }
         }
         else if (d['workhrs'] < 0) {
             d['workhrsBin'] = 'not recorded';
@@ -582,8 +591,6 @@ function buildVisualisation(e, json, geoJson, params) {
     var selectEmpsp = dc.selectMenu('#select-empsp');
     var selectRushed = dc.selectMenu('#select-rushed');
     var selectHealth = dc.selectMenu('#select-health');
-
-
     /**
      *
      * Assign Dimension,Group,Colors etc. to all those Charts
@@ -1032,7 +1039,7 @@ function buildVisualisation(e, json, geoJson, params) {
     /**
      * Conditional Grouped Activities, if the param has been provided via console, render it
      */
-    if (params[0] && params[0]['groupedActivities'] === 1) {
+    if (params[0] && params[0]['groupedActivities'] == 1) {
         /**
          * Grouped Activities
          * @type {crossfilter.dimension|dc.baseMixin|*}
@@ -1144,7 +1151,7 @@ function buildVisualisation(e, json, geoJson, params) {
     /**
      * Conditional Heatmap, if the param has been provided via console, render it
      */
-    if (params[0] && params[0]['heatmap'] === 1) {
+    if (params[0] && params[0]['heatmap'] == 1) {
         //The dimension doesnt really matter, since you won't be able to filter on it.
         var heatDim = ndx.dimension(function (d) {
             return [d['day'], d['main']];

@@ -33,7 +33,7 @@ def dataset():
     json_data = []
     # 'u because pymongo returns data in unicode
     for entry in data:
-        if entry[u'countrya'] not in cfg.EXCLUDED:
+        if entry[u'countrya'] in cfg.INCLUDED:
             all_activities = [entry[u'main1'], entry[u'main2'], entry[u'main3'], entry[u'main4'], entry[u'main5'],
                               entry[u'main6'], entry[u'main7'], entry[u'main8'], entry[u'main9'], entry[u'main10'],
                               entry[u'main11'], entry[u'main12'], entry[u'main13'],

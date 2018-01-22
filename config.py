@@ -177,6 +177,7 @@ FIELDS = {
     'edcat': True
 
 }
+# These Fields are currently not used in the visualisation
 FIELDS_EXCLUDED = {
     'swave': False,
     'msamp': False,
@@ -191,7 +192,6 @@ FIELDS_EXCLUDED = {
     'cphome': False,
     'relrefp': False,
     'empinclm': False,
-    'edcat': False,
     'av1': False,
     'av2': False,
     'av3': False,
@@ -285,4 +285,6 @@ countrya = {
     38: 'USA'
 }
 # Countries not included
-EXCLUDED = [2, 5, 7, 8, 15, 19, 23, 25, 28, 33, 38, 35,11,4,9,10,16,37,34]
+# EXCLUDED = [1,2,4,5,6,7,8,9,10,11,14,15,16,17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33, 35,36,38]
+# INCLUDED = [3,12,13,18,22,34,37]
+INCLUDED = [12, 13, 18, 34, 37]
