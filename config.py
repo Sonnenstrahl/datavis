@@ -6,7 +6,6 @@ APP_PORT = 8080
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 DB_NAME = 'timeuse'
-DB_COLL = 'big'
 
 # Fields could be excluded here in the future if there is no reason to work with them
 FIELDS = {
@@ -287,4 +286,4 @@ countrya = {
 # Countries not included
 # EXCLUDED = [1,2,4,5,6,7,8,9,10,11,14,15,16,17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33, 35,36,38]
 # INCLUDED = [3,12,13,18,22,34,37]
-INCLUDED = [3, 12, 13, 18, 22]
+INCLUDED = [3, 12, 13, 18, 37,34]

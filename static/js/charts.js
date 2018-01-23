@@ -431,14 +431,15 @@ function buildVisualisation(e, json, geoJson, params) {
          * @returns {Object}
          */
         function reduceAddActivity(p, v) {
-            v['gAct'].forEach(function (val, index) {
-                if (!p[index])
-                    p[index] = [val, 1];
-                else {
-                    p[index][0] += val;
-                    p[index][1] += 1;
+            var obj = v['gAct'];
+            for(var k in obj){
+                if(!p[+k])
+                p[+k] = {0:obj[+k],1:1}
+                else{
+                    p[k][0] += obj[+k];
+                    p[k][1] += 1;
                 }
-            });
+            }
             return p;
         }
         /**
@@ -448,10 +449,11 @@ function buildVisualisation(e, json, geoJson, params) {
          * @returns {Object}
          */
         function reduceRemoveActivity(p, v) {
-            v['gAct'].forEach(function (val, index) {
-                p[index][0] -= val;
-                p[index][1] -= 1;
-            });
+            var obj = v['gAct'];
+            for(var k in obj){
+                p[+k][0] -= obj[+k];
+                p[+k][1] -= 1;
+            }
             return p;
         }
         /**
@@ -530,7 +532,7 @@ function buildVisualisation(e, json, geoJson, params) {
         var heatGroup = heatDim.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
         /**
-         *  Custom reduce functions, to work with arrays, activities are converted into the following:
+         *  Custom reduce functions, to work with objects, activities are converted into the following:
          'day,main': [value,count]
          for example: 121: 10
          If a record gets added example:
@@ -549,16 +551,17 @@ function buildVisualisation(e, json, geoJson, params) {
          * @returns {Object}
          */
         function reduceAdd(p, v) {
-            v['main'].forEach(function (val, index) {
-                //+1 since Activity 0 is not a thing, but the first index of the array is 0
-                var key = concatenateNumber(v['day'], index + 1);
+            var obj = v['main'];
+            for (var k in obj){
+                var key = concatenateNumber(v['day'], +k);
                 if (!p[key])
-                    p[key] = [val, 1];
+                    p[key] = {0: key, 1: 1};
                 else {
-                    p[key][0] += val;
+                    p[key][0] += obj[k];
                     p[key][1] += 1;
                 }
-            });
+
+            }
             return p;
         }
 
@@ -568,13 +571,14 @@ function buildVisualisation(e, json, geoJson, params) {
          * @param {Object} v - the current record being evaluated
          * @returns {Object}
          */
-        function reduceRemove(p, v) {
-            v['main'].forEach(function (val, index) {
-                //+1 since Activity 0 is not a thing, but the first index of the array is 0
-                var key = concatenateNumber(v['day'], index + 1);
+        function reduceRemove(p, v){
+            var obj = v['main'];
+            for (var k in obj){
+                var key = concatenateNumber(v['day'], +k);
                 p[key][1] -= 1;
-                p[key][0] -= val;
-            });
+                p[key][0] -= obj[k];
+
+            }
             return p;
         }
 
