@@ -1,3 +1,8 @@
+/**
+ * @Author: David Haas
+ * @Date: 22.01.2018
+ */
+
 var a = {
     1: 'string1',
     2: 'string2'

@@ -75,9 +75,9 @@ var occup = {
     10: 'Security and armed forces',
     11: 'Sales, services, creative support, cleaning',
     12: 'Farming, forestry, fishing',
-    13: 'Construction, assembly&repair, moving goods, transport,extraction',
-    14: 'self employed non-professionals',
-    15: 'Others/Undefined'
+    13: 'Construction, assembly & repair, moving goods, transport, extraction',
+    14: 'Self employed non-professionals',
+    15: 'Others/undefined'
 };
 var badcase = {
     0: 'Good case',
@@ -141,12 +141,12 @@ var sector = {
     2: 'Private Sector'
 };
 var famstat = {
-    0: 'Adult aged 18 to 39 with no co-resident children <18',
-    1: 'Adult 18+ living with 1+ co-resident children aged <5',
-    2: 'Adult 18+ living with 1+ co-resident children 5-17, none <5',
-    3: 'Adult aged 40+ with no co-resident children <18',
-    4: 'Respondent aged <18 and living with parent(s)/guardian(s)',
-    5: 'Respondent aged <18, living arrangement other or unknown',
+    0: 'Adult (18–39y) w/o child (<18y)',
+    1: 'Adult (18y+) w. 1+ child (<5y)',
+    2: 'Adult (18y+) w. 1+ child (5-17y)',
+    3: 'Adult (40y+) w/o child (<18y)',
+    4: 'Resp. (<18y) living w. parent(s)',
+    5: 'Resp. (<18y) arrangement other',
     '-7': 'undefined'
 };
 var activitiesCombined = {
@@ -154,7 +154,7 @@ var activitiesCombined = {
     1: 'Work travel & commute',
     2: 'Private travel',
     3: 'Food & Drink',
-    4: 'Paid and voluntary work',
+    4: 'Paid & voluntary work',
     5: 'Leisure & recreation',
     6: 'Personal, household, family care',
     7: 'Sleep & rest'
