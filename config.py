@@ -14,7 +14,7 @@ FIELDS = {
     'survey': True,
     'swave': True,
     'msamp': True,
-    'hhldid': True,
+    'hldid': True,
     'persid': True,
     'id': True,
     'parntid1': True,

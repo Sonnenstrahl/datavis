@@ -49,11 +49,11 @@ function buildVisualisation(e, json, geoJson, params) {
         //Combine Ages into Bins, CF Bins work but do not filter correctly.
         if (d['age']) {
             if (d['age'] < 20) {
-                d['ageFix'] = 'under 20';
+                d['ageFix'] = '18 – 19';
             }
             else {
                 var ageBin = Math.floor(d['age'] / 10) * 10;
-                d['ageFix'] = ageBin + ' - ' + (ageBin + 9);
+                d['ageFix'] = ageBin + ' – ' + (ageBin + 9);
             }
         }
         else d['ageFix'] = 0;
@@ -64,11 +64,11 @@ function buildVisualisation(e, json, geoJson, params) {
                 d['workhrsBin'] = '100+';
             }
             else {
-                d['workhrsBin'] = workhrsBin + ' - ' + (workhrsBin + 19);
+                d['workhrsBin'] = workhrsBin + ' – ' + (workhrsBin + 19);
             }
         }
         else if (d['workhrs'] < 0) {
-            d['workhrsBin'] = 'not recorded';
+            d['workhrsBin'] = 'Not recorded';
         }
         else d['workhrsBin'] = '0';
     });
@@ -489,11 +489,11 @@ function buildVisualisation(e, json, geoJson, params) {
          */
         activityGroupPieChart
             .width(450)
-            .height(230)
+            .height(200)
             .externalRadiusPadding(30)
             .dimension(activities)
             .group(activitiesGroup)
-            .innerRadius(40)
+            .innerRadius(35)
             .externalLabels(20)
             .legend(dc.legend().x(250).y(0).gap(12).legendText(function (d) {
                 if (d.name in activitiesCombined)
@@ -501,7 +501,7 @@ function buildVisualisation(e, json, geoJson, params) {
             }))
             .cx(120)
             .title(function (d) {
-                return 'Average time spent: ' + d.value + '\n' + activitiesCombined[d.key];
+                return 'Avg: ' + d.value + '\n' + activitiesCombined[d.key];
             })
             .renderLabel(true);
         /**
@@ -639,7 +639,7 @@ function buildVisualisation(e, json, geoJson, params) {
                 , 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69])
             .colors(d3.scale.linear().range(['white', 'darkgreen']))
             .title(function (d) {
-                return 'Avg: ' + (d.avg);
+                return 'Avg: ' + (d.avg) + '\n' + (actToolTip[d.activity]);
             })
             .rowsLabel(function (d) {
                 if (d in day)
