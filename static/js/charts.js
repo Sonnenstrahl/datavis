@@ -555,7 +555,7 @@ function buildVisualisation(e, json, geoJson, params) {
             for (var k in obj){
                 var key = concatenateNumber(v['day'], +k);
                 if (!p[key])
-                    p[key] = {0: key, 1: 1};
+                    p[key] = {0: obj[k], 1: 1};
                 else {
                     p[key][0] += obj[k];
                     p[key][1] += 1;
