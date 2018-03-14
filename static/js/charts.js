@@ -690,7 +690,7 @@ function buildVisualisation(e, json, geoJson, params) {
                     survey: d['survey'],
                     swave: d['swave'],
                     msamp: d['msamp'],
-                    hhldid: d['hhldid'],
+                    hldid: d['hldid'],
                     persid: d['persid'],
                     id: d['id'],
                     parntid1: d['parntid1'],
